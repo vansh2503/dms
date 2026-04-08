@@ -1,0 +1,11 @@
+firstName,lastName,email,phone,alternatePhone,address,city,state,pincode,dateOfBirth,anniversaryDate,panNumber,aadharNumber,drivingLicense,customerType,loyaltyPoints,referredBy,notes
+Rajesh,Kumar,rajesh.kumar@example.com,9876543210,9123456789,123 MG Road,Bangalore,Karnataka,560001,1985-05-15,2010-12-20,ABCDE1234F,123456789012,KA0120200012345,INDIVIDUAL,0,Suresh Sharma,Interested in Creta SX(O) variant
+Priya,Sharma,priya.sharma@example.com,9988776655,,456 Park Street,Mumbai,Maharashtra,400001,1990-08-20,2015-06-10,FGHIJ5678K,987654321098,MH0120200054321,INDIVIDUAL,50,,VIP customer - previous buyer
+Amit,Patel,amit.patel@example.com,9123456780,9876543211,789 Ring Road,Ahmedabad,Gujarat,380001,1988-03-10,2012-11-15,KLMNO9012P,456789012345,GJ0120200098765,INDIVIDUAL,100,Rajesh Kumar,Referred by existing customer
+Sunita,Reddy,sunita.reddy@example.com,9876501234,,321 Jubilee Hills,Hyderabad,Telangana,500001,1992-07-25,2018-02-14,PQRST3456U,789012345678,TS0120200011111,INDIVIDUAL,0,,First time buyer
+Vikram,Singh,vikram.singh@example.com,9988001122,9123009988,654 Civil Lines,Delhi,Delhi,110001,1980-12-05,2005-04-20,UVWXY7890Z,234567890123,DL0120200022222,INDIVIDUAL,200,,Loyal customer - 3rd purchase
+TechCorp,Solutions,info@techcorp.com,9876000111,9123000222,Corporate Tower A,Pune,Maharashtra,411001,,,ABCDE0000A,,,CORPORATE,500,,Fleet purchase - 10 vehicles
+Meera,Iyer,meera.iyer@example.com,9988112233,,88 Anna Salai,Chennai,Tamil Nadu,600001,1995-09-18,2020-01-10,FGHIJ1111B,345678901234,TN0120200033333,INDIVIDUAL,25,,Interested in Venue
+Arjun,Mehta,arjun.mehta@example.com,9876112233,9123112244,999 SG Highway,Ahmedabad,Gujarat,380015,1987-11-30,2013-08-22,KLMNO2222C,456789012346,GJ0120200044444,INDIVIDUAL,75,Amit Patel,Exchange customer
+Kavita,Nair,kavita.nair@example.com,9988223344,,123 Marine Drive,Kochi,Kerala,682001,1993-04-12,2019-12-25,PQRST3333D,567890123457,KL0120200055555,INDIVIDUAL,0,,Test drive scheduled
+Ravi,Gupta,ravi.gupta@example.com,9876223344,9123223355,456 Sector 18,Noida,Uttar Pradesh,201301,1985-06-08,2010-10-10,UVWXY4444E,678901234568,UP0120200066666,INDIVIDUAL,150,,Anniversary offer eligible
