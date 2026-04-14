@@ -38,6 +38,10 @@ frontend/*.njsproj
 frontend/*.sln
 frontend/*.sw?
 
+# ===== ROOT LEVEL IDE FILES =====
+.idea/
+.vscode/
+
 # ===== BACKEND =====
 
 # Compiled class files
@@ -129,6 +133,7 @@ $RECYCLE.BIN/
 *.swp
 *.swo
 *~
+~$*
 
 # ===== DOCUMENTATION BUILD =====
 docs/_build/
