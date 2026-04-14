@@ -50,6 +50,9 @@ backend/!.mvn/wrapper/maven-wrapper.jar
 backend/!**/src/main/**/target/
 backend/!**/src/test/**/target/
 
+# Maven local settings (use user's ~/.m2/settings.xml instead)
+backend/.m2/
+
 # Log files
 backend/*.log
 backend/logs/
@@ -144,3 +147,13 @@ site/
 *.pid
 *.seed
 *.pid.lock
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+dist/
+build/
