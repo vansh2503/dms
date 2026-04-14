@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -15,11 +14,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.dms.demo.dto.request.ChangePasswordRequest;
 import com.dms.demo.dto.response.ApiResponse;
 import com.dms.demo.dto.request.RegisterRequest;
 import com.dms.demo.dto.response.UserResponse;
-import com.dms.demo.entity.User;
 import com.dms.demo.service.UserService;
 import com.dms.demo.service.AuditService;
 
@@ -73,27 +70,5 @@ public class UserController {
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         userService.deleteUser(id);
         return ResponseEntity.noContent().build();
-    }
-
-    @PostMapping("/{id}/change-password")
-    public ResponseEntity<ApiResponse<String>> changePassword(
-            @PathVariable Long id,
-            @Valid @RequestBody ChangePasswordRequest request,
-            Authentication authentication) {
-        
-        // Get current logged-in user
-        User currentUser = (User) authentication.getPrincipal();
-        
-        // Users can only change their own password (unless they're SUPER_ADMIN)
-        if (!currentUser.getUserId().equals(id) && 
-            !currentUser.getRole().name().equals("SUPER_ADMIN")) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN)
-                    .body(ApiResponse.error("You can only change your own password", "FORBIDDEN"));
-        }
-        
-        userService.changePassword(id, request);
-        auditService.log("CHANGE_PASSWORD", currentUser.getUsername(), "Password changed for User ID: " + id);
-        
-        return ResponseEntity.ok(ApiResponse.success("Password changed successfully"));
     }
 }
