@@ -23,6 +23,16 @@ public interface VehicleRepository extends JpaRepository<Vehicle, Long>, JpaSpec
     @Query("SELECT v FROM Vehicle v JOIN FETCH v.variant vv JOIN FETCH vv.model JOIN FETCH v.dealership WHERE v.dealership.dealershipId = :dealershipId")
     List<Vehicle> findByDealershipDealershipId(@Param("dealershipId") Long dealershipId);
 
+    @Query("SELECT v FROM Vehicle v LEFT JOIN FETCH v.variant vv LEFT JOIN FETCH vv.model LEFT JOIN FETCH v.dealership WHERE " +
+           "(:status IS NULL OR v.status = :status) AND " +
+           "(:dealershipId IS NULL OR v.dealership.dealershipId = :dealershipId) AND " +
+           "(:search IS NULL OR :search = '' OR " +
+           "LOWER(vv.variantName) LIKE LOWER(CONCAT('%', :search, '%')) OR " +
+           "LOWER(vv.model.modelName) LIKE LOWER(CONCAT('%', :search, '%')) OR " +
+           "LOWER(v.vin) LIKE LOWER(CONCAT('%', :search, '%')) OR " +
+           "LOWER(v.color) LIKE LOWER(CONCAT('%', :search, '%')))")
+    List<Vehicle> findWithFilters(@Param("search") String search, @Param("dealershipId") Long dealershipId, @Param("status") VehicleStatus status);
+
     Page<Vehicle> findAll(Pageable pageable);
     Page<Vehicle> findByDealershipDealershipId(Long dealershipId, Pageable pageable);
     Page<Vehicle> findByStatus(VehicleStatus status, Pageable pageable);

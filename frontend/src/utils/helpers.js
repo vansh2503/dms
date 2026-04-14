@@ -66,3 +66,35 @@ export const generateBookingNumber = () => {
   const random = Math.floor(Math.random() * 10000).toString().padStart(4, '0');
   return `HYN-${year}-${random}`;
 };
+
+// Download data as CSV
+export const downloadCSV = (rows, filename) => {
+  if (!rows || !rows.length) {
+    alert('No data to export');
+    return;
+  }
+  
+  // Extract headers
+  const headers = Object.keys(rows[0]).join(',');
+  
+  // Format body
+  const body = rows.map((r) => 
+    Object.values(r)
+      .map((v) => {
+        // Escape quotes and wrap in quotes for CSV safety
+        const str = String(v ?? '');
+        return '"' + str.replace(/"/g, '""') + '"';
+      })
+      .join(',')
+  ).join('\n');
+  
+  const blob = new Blob([headers + '\n' + body], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename || 'export.csv';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+};

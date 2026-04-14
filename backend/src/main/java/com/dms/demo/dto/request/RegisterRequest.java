@@ -12,7 +12,7 @@ import lombok.Data;
 public class RegisterRequest {
     // Optional: auto-derived from email if not provided
     @Size(min = 3, max = 50, message = "Username must be between 3 and 50 characters")
-    @Pattern(regexp = "^[a-zA-Z0-9._-]+$", message = "Username can only contain letters, numbers, dots, underscores, and hyphens")
+    @Pattern(regexp = "^[a-zA-Z0-9._@-]+$", message = "Username can only contain letters, numbers, dots, underscores, hyphens, and @ symbols")
     private String username;
     
     // Password is optional on update, required only on create (validated in service layer)
@@ -29,7 +29,7 @@ public class RegisterRequest {
     @Size(min = 2, max = 100, message = "Full name must be between 2 and 100 characters")
     private String fullName;
     
-    @Pattern(regexp = "^(\\+91)?[6-9]\\d{9}$", message = "Phone must be a valid 10-digit Indian mobile number (optionally prefixed with +91)")
+    @Pattern(regexp = "^(\\+91)?0?[6-9]\\d{9}$", message = "Phone must be a valid 10-digit Indian mobile number (optionally prefixed with +91 or 0)")
     private String phone;
     
     private UserRole role;

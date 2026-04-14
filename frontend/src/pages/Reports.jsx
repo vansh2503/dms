@@ -1,4 +1,4 @@
-﻿import { useState } from 'react';
+import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { reportService } from '../services/reportService';
 import { adminService } from '../services/adminService';
@@ -10,6 +10,7 @@ import {
 } from 'recharts';
 import PageHeader from '../components/ui/PageHeader';
 import { StatusBadge } from '../components/ui/Badge';
+import { downloadCSV } from '../utils/helpers';
 
 const CHART_COLORS = ['#002C5F', '#00AAD2', '#0E4C92', '#64748B', '#94A3B8', '#CBD5E1'];
 
@@ -52,16 +53,7 @@ const TABS = [
   { id: 'models',    label: 'Top Models' },
 ];
 
-const downloadCSV = (rows, filename) => {
-  if (!rows || !rows.length) { alert('No data to export'); return; }
-  const headers = Object.keys(rows[0]).join(',');
-  const body = rows.map((r) => Object.values(r).map((v) => '"' + (v ?? '') + '"').join(',')).join('\n');
-  const blob = new Blob([headers + '\n' + body], { type: 'text/csv' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url; a.download = filename; a.click();
-  URL.revokeObjectURL(url);
-};
+
 
 const Reports = () => {
   const { user } = useAuth();

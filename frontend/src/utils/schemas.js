@@ -57,6 +57,8 @@ export const VehicleSchema = z.object({
 });
 
 export const TestDriveSchema = z.object({
+  customerId: z.union([z.number(), z.string(), z.null(), z.undefined()]).optional(),
+  vehicleId: z.union([z.number(), z.string(), z.null(), z.undefined()]).optional(),
   date: z.string().nonempty('Date is required').refine((val) => {
     const selectedDate = new Date(val);
     const todayDate = new Date();
@@ -67,6 +69,10 @@ export const TestDriveSchema = z.object({
 });
 
 export const BookingSchema = z.object({
+  customerId: z.union([z.number(), z.string(), z.null(), z.undefined()]).optional(),
+  vehicleId: z.union([z.number(), z.string(), z.null(), z.undefined()]).optional(),
+  variantId: z.union([z.number(), z.string(), z.null(), z.undefined()]).optional(),
+  totalAmount: z.number().optional(),
   bookingAmount: z.preprocess((val) => Number(val), z.number().min(10000, 'Minimum booking amount is ₹10,000')),
   expectedDeliveryDate: z.string().nonempty('Expected delivery date is required').refine((val) => {
     const selectedDate = new Date(val);

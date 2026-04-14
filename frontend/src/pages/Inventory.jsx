@@ -15,6 +15,7 @@ import ConfirmDialog from '../components/ui/ConfirmDialog';
 import { getErrorMessage } from '../utils/errorHandler';
 import { SkeletonTable, SkeletonCards } from '../components/ui/SkeletonLoader';
 import InlineEdit from '../components/ui/InlineEdit';
+import { downloadCSV, formatCurrency } from '../utils/helpers';
 
 const statuses = ['IN_TRANSIT', 'IN_STOCKYARD', 'IN_SHOWROOM', 'BOOKED', 'DISPATCHED', 'SOLD'];
 const fuelTypes = ['PETROL', 'DIESEL', 'CNG', 'ELECTRIC', 'HYBRID'];
@@ -119,7 +120,28 @@ const Inventory = () => {
     setPage(0);
   };
 
-  const handleExport = () => alert('Export functionality will be implemented');
+  const handleExport = () => {
+    if (!vehicles || vehicles.length === 0) {
+      alert('No data to export');
+      return;
+    }
+
+    const exportData = vehicles.map(v => ({
+      'VIN': v.vin,
+      'Model': v.model,
+      'Variant': v.variant,
+      'Color': v.color,
+      'Fuel Type': v.fuelType,
+      'Transmission': v.transmissionType || 'N/A',
+      'Arrival Date': v.arrivalDate ? new Date(v.arrivalDate).toLocaleDateString('en-IN') : 'N/A',
+      'Status': v.status.replace(/_/g, ' '),
+      'Location': v.stockyardLocation || 'N/A',
+      'Price': v.price
+    }));
+
+    const date = new Date().toISOString().slice(0, 10);
+    downloadCSV(exportData, `inventory-export-${date}.csv`);
+  };
   const handleViewDetails = (v) => { setSelectedVehicle(v); setShowDetailsModal(true); };
   const handleEdit = (v) => { setSelectedVehicle(v); setShowAddModal(true); };
   const handleDelete = (vehicle) => { 

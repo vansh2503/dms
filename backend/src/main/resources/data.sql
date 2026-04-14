@@ -52,7 +52,6 @@ INSERT IGNORE INTO users (username, password, email, full_name, phone, role, dea
 ('venkat.reddy',    '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lh3y', 'venkat.reddy@hyundai.in',    'Venkat Reddy',       '9848005005', 'DEALER_MANAGER',  5,    TRUE),
 ('hitesh.shah',     '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lh3y', 'hitesh.shah@hyundai.in',     'Hitesh Shah',        '9825006006', 'DEALER_MANAGER',  6,    TRUE),
 ('gurpreet.singh',  '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lh3y', 'gurpreet.singh@hyundai.in',  'Gurpreet Singh',     '9815010010', 'DEALER_MANAGER',  10,   TRUE),
-('senior.official', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lh3y', 'senior.official@hyundai.in', 'Arun Krishnamurthy', '9900111222', 'SENIOR_OFFICIAL', NULL, TRUE),
 ('thomas.varghese', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lh3y', 'thomas.varghese@hyundai.in', 'Thomas Varghese',    '9847011011', 'DEALER_MANAGER',  11,   TRUE);
 
 -- ============================================================
@@ -379,3 +378,38 @@ INSERT IGNORE INTO test_drives (customer_id, vehicle_id, dealership_id, sales_ex
 (5,  3,  1,  7,  CURDATE(), '14:00:00', 'SCHEDULED', NULL),
 (8,  8,  4,  12, CURDATE(), '15:30:00', 'SCHEDULED', NULL),
 (10, 19, 11, 20, CURDATE(), '16:30:00', 'SCHEDULED', NULL);
+
+-- ============================================================
+-- 16. APRIL 2026 DASHBOARD LIVE DATA
+-- ============================================================
+SET SESSION sql_mode = '';
+SET FOREIGN_KEY_CHECKS = 0;
+
+-- Ad-hoc bookings for today (simulated date: 2026-04-14)
+INSERT IGNORE INTO bookings (booking_number, customer_id, vehicle_id, variant_id, dealership_id, sales_executive_id, booking_amount, total_amount, booking_date, expected_delivery_date, status, payment_mode, remarks) VALUES
+('B-2026-APR-001', 1, NULL, 3, 1, 6, 50000.00, 1545000.00, '2026-04-14', '2026-05-14', 'CONFIRMED', 'UPI', 'April Sample Booking 1'),
+('B-2026-APR-002', 2, NULL, 7, 1, 7, 25000.00, 1199000.00, '2026-04-14', '2026-05-10', 'CONFIRMED', 'NEFT', 'April Sample Booking 2'),
+('B-2026-APR-003', 3, NULL, 4, 1, 6, 75000.00, 1950000.00, '2026-04-14', '2026-05-20', 'PENDING', 'Bank Transfer', 'April Sample Booking 3'),
+('B-2026-APR-004', 4, NULL, 1, 1, 8, 30000.00, 1099000.00, '2026-04-14', '2026-05-05', 'CONFIRMED', 'UPI', 'April Sample Booking 4'),
+('B-2026-APR-005', 5, NULL, 2, 1, 9, 20000.00, 1250000.00, '2026-04-14', '2026-05-15', 'CONFIRMED', 'NEFT', 'April Sample Booking 5');
+
+-- Ensure some existing bookings have current dates for metrics
+UPDATE bookings SET booking_date = '2026-04-14' WHERE booking_id IN (1, 2, 3, 4, 5);
+
+-- Dispatches (Deliveries) for April 2026
+INSERT IGNORE INTO dispatch_records (booking_id, vehicle_id, customer_id, dispatch_date, dispatch_time, dispatched_by, delivery_location, odometer_reading, fuel_level, documents_handed_over, keys_handed_over, customer_signature, remarks) VALUES
+(1, 1, 1, '2026-04-10', '10:00:00', 6, 'Ramesh Nagar, New Delhi', 10, 'Full', TRUE, TRUE, TRUE, 'April Delivery 1'),
+(2, 4, 2, '2026-04-12', '11:30:00', 7, 'Thane, Mumbai', 15, 'Full', TRUE, TRUE, TRUE, 'April Delivery 2'),
+(3, 6, 3, '2026-04-14', '14:00:00', 6, 'Indiranagar, Bengaluru', 12, 'Full', TRUE, TRUE, TRUE, 'April Delivery 3');
+
+-- Sales Transactions for Revenue (April 2026)
+INSERT IGNORE INTO sales_transactions (booking_id, vehicle_id, customer_id, dealership_id, sales_executive_id, sale_date, vehicle_price, accessories_price, insurance_amount, registration_charges, other_charges, discount_amount, exchange_value, total_amount, payment_mode, finance_company, loan_amount, down_payment, invoice_number, invoice_date) VALUES
+(1, 1, 1, 1, 6, '2026-04-10', 1099000.00, 5000.00, 35000.00, 45000.00, 2000.00, 10000.00, 0.00, 1176000.00, 'NEFT', NULL, 0.00, 1176000.00, 'INV-APR-001', '2026-04-10'),
+(2, 4, 2, 1, 7, '2026-04-12', 1250000.00, 8000.00, 40000.00, 50000.00, 2500.00, 15000.00, 200000.00, 1135500.00, 'Finance', 'HDFC', 800000.00, 335500.00, 'INV-APR-002', '2026-04-12'),
+(3, 6, 3, 1, 6, '2026-04-14', 1545000.00, 12000.00, 45000.00, 60000.00, 3000.00, 20000.00, 0.00, 1645000.00, 'NEFT', NULL, 0.00, 1645000.00, 'INV-APR-003', '2026-04-14');
+
+-- Sync vehicle status
+UPDATE vehicles SET status = 'SOLD' WHERE vehicle_id IN (1, 4, 6);
+
+SET FOREIGN_KEY_CHECKS = 1;
+

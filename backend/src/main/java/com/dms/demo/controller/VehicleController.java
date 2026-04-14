@@ -62,6 +62,7 @@ public class VehicleController {
      */
     @GetMapping
     public ResponseEntity<?> getAll(
+            @RequestParam(required = false) String search,
             @RequestParam(required = false) Long dealershipId,
             @RequestParam(required = false) VehicleStatus status,
             @RequestParam(required = false) String color,
@@ -93,10 +94,16 @@ public class VehicleController {
 
         // Legacy flat-list path (keeps existing frontend working)
         List<Vehicle> vehicles;
-        if (dealershipId != null && status != null) {
+        if (search != null && !search.trim().isEmpty()) {
+            vehicles = vehicleRepository.findWithFilters(search.trim(), dealershipId, status);
+        } else if (dealershipId != null && status != null) {
             vehicles = vehicleRepository.findByDealershipDealershipIdAndStatus(dealershipId, status);
         } else if (dealershipId != null) {
             vehicles = vehicleRepository.findByDealershipDealershipId(dealershipId);
+        } else if (status != null) {
+            // Need to handle findByStatus because vehicleRepository.findByStatus without pageable is missing. 
+            // Better to just use findWithFilters if status is present and no dealershipId.
+            vehicles = vehicleRepository.findWithFilters(null, null, status);
         } else {
             vehicles = vehicleRepository.findAll();
         }

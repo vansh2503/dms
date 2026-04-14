@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Plus, Edit, Trash2, UserX, UserCheck, Filter, X } from 'lucide-react';
+import { Plus, Edit, Trash2, UserX, UserCheck, Filter, X, User, Mail, Phone, Lock, Shield, Building } from 'lucide-react';
 import Modal from '../Modal';
 import ConfirmDialog from '../ui/ConfirmDialog';
 import PageHeader from '../ui/PageHeader';
@@ -10,6 +10,7 @@ import { useForm } from 'react-hook-form';
 import { adminService } from '../../services/adminService';
 import { getErrorMessage } from '../../utils/errorHandler';
 import { SkeletonTable } from '../ui/SkeletonLoader';
+import FormField from '../FormField';
 
 const UserManagementTab = () => {
   const queryClient = useQueryClient();
@@ -39,16 +40,16 @@ const UserManagementTab = () => {
   const dealerships = dealershipsResponse?.data || [];
 
   const filteredUsers = users.filter(user => {
-    const matchesSearch = !filters.search || 
+    const matchesSearch = !filters.search ||
       user.fullName?.toLowerCase().includes(filters.search.toLowerCase()) ||
       user.email?.toLowerCase().includes(filters.search.toLowerCase()) ||
       user.phone?.includes(filters.search);
-    
+
     const matchesRole = !filters.role || user.role === filters.role;
-    const matchesStatus = !filters.status || 
+    const matchesStatus = !filters.status ||
       (filters.status === 'active' && user.isActive) ||
       (filters.status === 'inactive' && !user.isActive);
-    
+
     return matchesSearch && matchesRole && matchesStatus;
   });
 
@@ -60,7 +61,7 @@ const UserManagementTab = () => {
   } = useForm();
 
   const mutation = useMutation({
-    mutationFn: (data) => selectedUser 
+    mutationFn: (data) => selectedUser
       ? adminService.updateUser(selectedUser.userId, data)
       : adminService.createUser(data),
     onSuccess: () => {
@@ -104,7 +105,12 @@ const UserManagementTab = () => {
   });
 
   const onSubmit = (data) => {
-    mutation.mutate(data);
+    const formattedData = {
+      ...data,
+      dealershipId: data.dealershipId ? Number(data.dealershipId) : null,
+      phone: data.phone?.trim() || null
+    };
+    mutation.mutate(formattedData);
   };
 
   const handleEdit = (user) => {
@@ -133,7 +139,7 @@ const UserManagementTab = () => {
     }
   };
 
-  const roles = ['SUPER_ADMIN', 'DEALER_MANAGER', 'SALES_EXECUTIVE', 'SENIOR_OFFICIAL'];
+  const roles = ['SUPER_ADMIN', 'DEALER_MANAGER', 'SALES_EXECUTIVE'];
 
   const handleFilterChange = (key, value) => {
     setFilters((prev) => ({ ...prev, [key]: value }));
@@ -162,7 +168,7 @@ const UserManagementTab = () => {
 
       <PageHeader
         title="User Management"
-        subtitle={`${filteredUsers.length} of {users.length} staff members`}
+        subtitle={`${filteredUsers.length} of ${users.length} staff members`}
       >
         <button
           onClick={() => {
@@ -322,9 +328,9 @@ const UserManagementTab = () => {
                         <button onClick={() => handleEdit(user)} className="btn btn-ghost btn-icon" title="Edit">
                           <Edit style={{ width: 15, height: 15, color: '#15803D' }} />
                         </button>
-                        <button 
-                          onClick={() => toggleMutation.mutate(user.userId)} 
-                          className="btn btn-ghost btn-icon" 
+                        <button
+                          onClick={() => toggleMutation.mutate(user.userId)}
+                          className="btn btn-ghost btn-icon"
                           title={user.isActive ? 'Deactivate' : 'Activate'}
                           disabled={mutation.isPending || toggleMutation.isPending || deleteMutation.isPending}
                         >
@@ -334,9 +340,9 @@ const UserManagementTab = () => {
                             <UserCheck style={{ width: 15, height: 15, color: '#15803D' }} />
                           )}
                         </button>
-                        <button 
-                          onClick={() => handleDelete(user)} 
-                          className="btn btn-ghost btn-icon" 
+                        <button
+                          onClick={() => handleDelete(user)}
+                          className="btn btn-ghost btn-icon"
                           title="Delete"
                           disabled={mutation.isPending || toggleMutation.isPending || deleteMutation.isPending}
                         >
@@ -358,50 +364,109 @@ const UserManagementTab = () => {
         title={selectedUser ? 'Edit User Profile' : 'Register New Staff Member'}
         size="md"
       >
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-          <div className="grid grid-cols-2 gap-4">
-            <div className="col-span-2">
-              <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Full Name</label>
-              <input {...register('fullName', { required: 'Name is required' })} className="w-full px-4 py-2 bg-gray-50 border-none rounded-lg text-sm transition-all focus:ring-2 focus:ring-hyundai-blue" />
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
+            <div className="md:col-span-2">
+              <FormField
+                label="Full Name"
+                name="fullName"
+                required
+                register={register}
+                error={errors.fullName?.message}
+                placeholder="Manager/Executive name"
+                icon={<User className="w-4 h-4" />}
+              />
             </div>
-            <div>
-              <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Username</label>
-              <input {...register('username', { required: 'Username is required' })} className="w-full px-4 py-2 bg-gray-50 border-none rounded-lg text-sm transition-all focus:ring-2 focus:ring-hyundai-blue" />
+
+            <FormField
+              label="Username"
+              name="username"
+              required
+              register={register}
+              error={errors.username?.message}
+              placeholder="Unique username"
+              icon={<Shield className="w-4 h-4" />}
+            />
+
+            <FormField
+              label="Phone Number"
+              name="phone"
+              register={register}
+              error={errors.phone?.message}
+              placeholder="09876543210"
+              icon={<Phone className="w-4 h-4" />}
+            />
+
+            <div className="md:col-span-2">
+              <FormField
+                label="Email Address"
+                name="email"
+                type="email"
+                required
+                register={register}
+                error={errors.email?.message}
+                placeholder="name@hyundai.in"
+                icon={<Mail className="w-4 h-4" />}
+              />
             </div>
-            <div>
-              <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Phone</label>
-              <input {...register('phone')} className="w-full px-4 py-2 bg-gray-50 border-none rounded-lg text-sm transition-all focus:ring-2 focus:ring-hyundai-blue" />
-            </div>
-            <div className="col-span-2">
-              <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Email Address</label>
-              <input type="email" {...register('email', { required: 'Email is required' })} className="w-full px-4 py-2 bg-gray-50 border-none rounded-lg text-sm transition-all focus:ring-2 focus:ring-hyundai-blue" />
-            </div>
+
             {!selectedUser && (
-              <div className="col-span-2">
-                <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Initial Password</label>
-                <input type="password" {...register('password', { required: 'Password is required' })} className="w-full px-4 py-2 bg-gray-50 border-none rounded-lg text-sm transition-all focus:ring-2 focus:ring-hyundai-blue" />
+              <div className="md:col-span-2">
+                <FormField
+                  label="Initial Password"
+                  name="password"
+                  type="password"
+                  required
+                  register={register}
+                  error={errors.password?.message}
+                  icon={<Lock className="w-4 h-4" />}
+                  hint="Min 8 chars, 1 uppercase, 1 lowercase, 1 number"
+                />
               </div>
             )}
+
             <div>
-              <label className="block text-xs font-bold text-gray-500 uppercase mb-1">System Role</label>
-              <select {...register('role')} className="w-full px-4 py-2 bg-gray-50 border-none rounded-lg text-sm transition-all focus:ring-2 focus:ring-hyundai-blue">
-                {roles.map(role => <option key={role} value={role}>{role.replace('_', ' ')}</option>)}
-              </select>
+              <label className="form-label">System Role <span className="text-red-500">*</span></label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
+                  <Shield className="w-4 h-4" />
+                </div>
+                <select {...register('role', { required: 'Role is required' })} className="form-select pl-10" defaultValue="SALES_EXECUTIVE">
+                  {roles.map(role => <option key={role} value={role}>{role.replace('_', ' ')}</option>)}
+                </select>
+              </div>
+              {errors.role && <p className="form-error">{errors.role.message}</p>}
             </div>
+
             <div>
-              <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Assigned Dealership</label>
-              <select {...register('dealershipId')} className="w-full px-4 py-2 bg-gray-50 border-none rounded-lg text-sm transition-all focus:ring-2 focus:ring-hyundai-blue">
-                <option value="">Select Dealership</option>
-                {dealerships.map(d => <option key={d.dealershipId} value={d.dealershipId}>{d.dealershipName}</option>)}
-              </select>
+              <label className="form-label">Assigned Dealership</label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
+                  <Building className="w-4 h-4" />
+                </div>
+                <select {...register('dealershipId')} className="form-select pl-10">
+                  <option value="">Select Dealership</option>
+                  {dealerships.map(d => <option key={d.dealershipId} value={d.dealershipId}>{d.dealershipName}</option>)}
+                </select>
+              </div>
             </div>
           </div>
 
-          <div className="flex justify-end space-x-3 pt-6 mt-6 border-t border-gray-100">
-            <button type="button" onClick={() => { setShowAddModal(false); reset(); }} className="px-6 py-2 text-sm font-bold text-gray-400 hover:text-gray-600 transition-colors">Cancel</button>
-            <button type="submit" disabled={mutation.isPending} className="btn btn-primary px-8">
+          <div className="flex justify-end items-center gap-4 pt-6 mt-6 border-t border-gray-100">
+            <button 
+              type="button" 
+              onClick={() => { setShowAddModal(false); reset(); }} 
+              className="text-sm font-bold text-gray-400 hover:text-gray-600 transition-colors"
+            >
+              Cancel
+            </button>
+            <button 
+              type="submit" 
+              disabled={mutation.isPending} 
+              className="btn btn-primary px-10 py-3 shadow-lg shadow-blue-100"
+            >
               {mutation.isPending && <span className="spinner spinner-sm" />}
-              {mutation.isPending ? 'Processing...' : selectedUser ? 'Update Records' : 'Create Account'}
+              {mutation.isPending ? 'Processing...' : selectedUser ? 'Save Updates' : 'Create Account'}
             </button>
           </div>
         </form>

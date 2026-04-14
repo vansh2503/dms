@@ -86,7 +86,11 @@ const DealershipManagementTab = () => {
   });
 
   const onSubmit = (data) => {
-    mutation.mutate(data);
+    const formattedData = {
+      ...data,
+      phone: data.phone?.trim() || ''
+    };
+    mutation.mutate(formattedData);
   };
 
   const handleEdit = (dealership) => {
@@ -331,7 +335,16 @@ const DealershipManagementTab = () => {
 
             <div>
               <label className="form-label">Dealership Code</label>
-              <input {...register('dealershipCode', { required: 'Code is required' })} className="input-field" />
+              <input 
+                {...register('dealershipCode', { 
+                  required: 'Code is required',
+                  pattern: {
+                    value: /^[a-zA-Z0-9-]+$/,
+                    message: "Alphanumeric and hyphens only"
+                  }
+                })} 
+                className="input-field" 
+              />
               {errors.dealershipCode && <p className="text-red-500 text-xs mt-1">{errors.dealershipCode.message}</p>}
             </div>
             <div>
@@ -347,13 +360,31 @@ const DealershipManagementTab = () => {
             </div>
             <div>
               <label className="form-label">Pincode</label>
-              <input {...register('pincode', { required: 'Pincode is required' })} className="input-field" />
+              <input 
+                {...register('pincode', { 
+                  required: 'Pincode is required',
+                  pattern: {
+                    value: /^\d{6}$/,
+                    message: "Must be 6 digits"
+                  }
+                })} 
+                className="input-field" 
+              />
               {errors.pincode && <p className="text-red-500 text-xs mt-1">{errors.pincode.message}</p>}
             </div>
 
             <div>
               <label className="form-label">Phone</label>
-              <input {...register('phone', { required: 'Phone is required' })} className="input-field" />
+              <input 
+                {...register('phone', { 
+                  required: 'Phone is required',
+                  pattern: {
+                    value: /^(\+91)?0?[6-9]\d{9}$/,
+                    message: "Invalid Indian mobile number"
+                  }
+                })} 
+                className="input-field" 
+              />
               {errors.phone && <p className="text-red-500 text-xs mt-1">{errors.phone.message}</p>}
             </div>
             <div>

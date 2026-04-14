@@ -15,7 +15,7 @@ export const vehicleService = {
         params.append(key, value);
       }
     });
-    const response = await axiosInstance.get(`/vehicles/filter?${params}`);
+    const response = await axiosInstance.get(`/vehicles?${params}`);
     return response.data;
   },
 

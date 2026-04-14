@@ -1,4 +1,4 @@
-﻿import { useState } from 'react';
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -45,8 +45,14 @@ const NewBookingForm = ({ onSuccess, onCancel }) => {
     mutation.mutate({
       customerId: Number(data.customerId),
       vehicleId: Number(data.vehicleId),
+      variantId: Number(data.variantId),
+      dealershipId: 1,
+      salesExecutiveId: 1,
       bookingAmount: Number(data.bookingAmount),
+      totalAmount: Number(data.totalAmount || data.bookingAmount * 10), // Provide totalAmount fallback
+      bookingDate: new Date().toISOString().split('T')[0], // Current date
       expectedDeliveryDate: data.expectedDeliveryDate,
+      paymentMode: "Bank Transfer", // Default payment mode
     });
   };
 
@@ -121,6 +127,8 @@ const NewBookingForm = ({ onSuccess, onCancel }) => {
           setValue('vehicleId', vehicle ? vehicle.id : '');
           if (vehicle) {
             setValue('bookingAmount', Math.round(vehicle.price * 0.1));
+            setValue('variantId', vehicle.variantId);
+            setValue('totalAmount', vehicle.price);
           }
         }}
         renderItem={(v) => (

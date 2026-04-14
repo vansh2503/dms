@@ -10,7 +10,7 @@ import lombok.Data;
 public class DealershipRequest {
     @NotBlank(message = "Dealership code is required")
     @Size(min = 3, max = 20, message = "Dealership code must be between 3 and 20 characters")
-    @Pattern(regexp = "^[A-Z0-9-]+$", message = "Dealership code must contain only uppercase letters, numbers, and hyphens")
+    @Pattern(regexp = "^[a-zA-Z0-9-]+$", message = "Dealership code must contain only letters, numbers, and hyphens")
     private String dealershipCode;
 
     @NotBlank(message = "Dealership name is required")
@@ -34,7 +34,7 @@ public class DealershipRequest {
     private String pincode;
 
     @NotBlank(message = "Phone is required")
-    @Pattern(regexp = "^[6-9]\\d{9}$", message = "Phone must be a valid 10-digit Indian mobile number")
+    @Pattern(regexp = "^(\\+91)?0?[6-9]\\d{9}$", message = "Phone must be a valid 10-digit Indian mobile number (optionally prefixed with +91 or 0)")
     private String phone;
 
     @Email(message = "Email must be valid")

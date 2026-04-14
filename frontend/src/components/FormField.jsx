@@ -24,6 +24,7 @@ const FormField = ({
   success,
   register,
   className = '',
+  icon,
   children,
   ...rest
 }) => {
@@ -39,29 +40,36 @@ const FormField = ({
       )}
       
       {children || (
-        <input
-          id={name}
-          type={type}
-          className={inputClassName}
-          {...(register ? register(name) : {})}
-          {...rest}
-        />
+        <div className={icon ? 'input-with-icon' : ''}>
+          {icon && (
+            <div className="input-icon">
+              {icon}
+            </div>
+          )}
+          <input
+            id={name}
+            type={type}
+            className={`${inputClassName} ${icon ? 'pl-10' : ''}`}
+            {...(register ? register(name) : {})}
+            {...rest}
+          />
+        </div>
       )}
-      
+
       {error && (
         <div className="form-error">
           <AlertCircle className="form-error-icon" />
           <span>{error}</span>
         </div>
       )}
-      
+
       {success && !error && (
         <div className="form-success">
           <CheckCircle2 className="form-success-icon" />
           <span>{success}</span>
         </div>
       )}
-      
+
       {hint && !error && !success && (
         <div className="form-hint">{hint}</div>
       )}

@@ -29,12 +29,10 @@ public class AuthServiceImpl implements AuthService {
     private final AuthenticationManager authenticationManager;
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-    private final JwtTokenProvider jwtTokenProvider;
+    private final JwtTokenProvider tokenProvider;
 
     @Override
     public AuthResponse login(LoginRequest request) {
-        log.info("Login attempt for user: {}", request.getUsernameOrEmail());
-        
         // Find user by email or username
         String input = request.getUsernameOrEmail();
         User user = userRepository.findByEmail(input)
@@ -57,7 +55,7 @@ public class AuthServiceImpl implements AuthService {
         SecurityContextHolder.getContext().setAuthentication(authentication);
         
         // Generate JWT token with user role embedded
-        String token = jwtTokenProvider.generateToken(authentication);
+        String token = tokenProvider.generateToken(authentication);
 
         log.info("Login successful for user: {}, role: {}", resolvedUsername, user.getRole());
         
@@ -105,7 +103,7 @@ public class AuthServiceImpl implements AuthService {
                 new UsernamePasswordAuthenticationToken(username, request.getPassword())
         );
 
-        String token = jwtTokenProvider.generateToken(authentication);
+        String token = tokenProvider.generateToken(authentication);
 
         log.info("Registration successful for user: {}, role: {}", username, user.getRole());
         return new AuthResponse(token, user.getUsername(), user.getRole().name(),
