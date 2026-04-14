@@ -2,6 +2,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import Modal from './Modal';
+import ChangePasswordModal from './auth/ChangePasswordModal';
 import {
   LayoutDashboard,
   Car,
@@ -14,10 +15,11 @@ import {
   Settings,
   LogOut,
   Layers,
+  KeyRound,
 } from 'lucide-react';
 
 const menuItems = [
-  { path: '/dashboard',  label: 'Dashboard',      icon: LayoutDashboard, roles: ['SUPER_ADMIN', 'DEALER_MANAGER', 'SALES_EXECUTIVE', 'SENIOR_OFFICIAL'] },
+  { path: '/dashboard',  label: 'Dashboard',      icon: LayoutDashboard, roles: ['SUPER_ADMIN', 'DEALER_MANAGER', 'SALES_EXECUTIVE'] },
   { path: '/inventory',  label: 'Inventory',       icon: Car,             roles: ['SUPER_ADMIN', 'DEALER_MANAGER', 'SALES_EXECUTIVE'] },
   { path: '/bookings',   label: 'Bookings',        icon: BookOpen,        roles: ['SUPER_ADMIN', 'DEALER_MANAGER', 'SALES_EXECUTIVE'] },
   { path: '/test-drives',label: 'Test Drives',     icon: TestTube,        roles: ['SUPER_ADMIN', 'DEALER_MANAGER', 'SALES_EXECUTIVE'] },
@@ -25,7 +27,7 @@ const menuItems = [
   { path: '/exchange',   label: 'Exchange',        icon: RefreshCw,       roles: ['SUPER_ADMIN', 'DEALER_MANAGER', 'SALES_EXECUTIVE'] },
   { path: '/accessories',label: 'Accessories',     icon: Package,         roles: ['SUPER_ADMIN', 'DEALER_MANAGER', 'SALES_EXECUTIVE'] },
   { path: '/variants',   label: 'Variants',        icon: Layers,          roles: ['SUPER_ADMIN', 'DEALER_MANAGER'] },
-  { path: '/reports',    label: 'Sales Reports',   icon: BarChart3,       roles: ['SUPER_ADMIN', 'DEALER_MANAGER', 'SENIOR_OFFICIAL'] },
+  { path: '/reports',    label: 'Sales Reports',   icon: BarChart3,       roles: ['SUPER_ADMIN', 'DEALER_MANAGER'] },
   { path: '/admin',      label: 'Admin Settings',  icon: Settings,        roles: ['SUPER_ADMIN'] },
 ];
 
@@ -33,6 +35,7 @@ const Sidebar = ({ open, onClose }) => {
   const location = useLocation();
   const { user, logout } = useAuth();
   const [showLogoutModal, setShowLogoutModal] = useState(false);
+  const [showChangePasswordModal, setShowChangePasswordModal] = useState(false);
 
   const isActive = (path) => location.pathname === path;
 
@@ -104,6 +107,18 @@ const Sidebar = ({ open, onClose }) => {
             </p>
           </div>
         </div>
+        
+        {/* Change Password Button */}
+        <button
+          onClick={() => setShowChangePasswordModal(true)}
+          className="nav-item w-full"
+          style={{ color: 'rgba(255,255,255,0.7)' }}
+        >
+          <KeyRound style={{ width: 16, height: 16, flexShrink: 0 }} />
+          <span>Change Password</span>
+        </button>
+        
+        {/* Logout Button */}
         <button
           onClick={handleLogoutClick}
           className="nav-item w-full"
@@ -157,6 +172,23 @@ const Sidebar = ({ open, onClose }) => {
             </button>
           </div>
         </div>
+      </Modal>
+
+      {/* Change Password Modal */}
+      <Modal
+        isOpen={showChangePasswordModal}
+        onClose={() => setShowChangePasswordModal(false)}
+        title="Change Password"
+        size="md"
+      >
+        <ChangePasswordModal
+          userId={user?.userId}
+          onSuccess={() => {
+            setShowChangePasswordModal(false);
+            // Optionally show a success toast
+          }}
+          onCancel={() => setShowChangePasswordModal(false)}
+        />
       </Modal>
     </aside>
   );

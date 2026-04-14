@@ -104,6 +104,32 @@ public class UserServiceImpl implements UserService {
                 .collect(Collectors.toList());
     }
 
+    @Override
+    @Transactional
+    public void changePassword(Long userId, com.dms.demo.dto.request.ChangePasswordRequest request) {
+        // Validate that new password and confirm password match
+        if (!request.getNewPassword().equals(request.getConfirmPassword())) {
+            throw new com.dms.demo.exception.InvalidPasswordException("New password and confirm password do not match");
+        }
+
+        // Find user
+        User user = findById(userId);
+
+        // Verify current password
+        if (!passwordEncoder.matches(request.getCurrentPassword(), user.getPassword())) {
+            throw new com.dms.demo.exception.InvalidPasswordException("Current password is incorrect");
+        }
+
+        // Check if new password is same as current password
+        if (passwordEncoder.matches(request.getNewPassword(), user.getPassword())) {
+            throw new com.dms.demo.exception.InvalidPasswordException("New password must be different from current password");
+        }
+
+        // Update password
+        user.setPassword(passwordEncoder.encode(request.getNewPassword()));
+        userRepository.save(user);
+    }
+
     private User findById(Long id) {
         return userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + id));
